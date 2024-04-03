@@ -2,12 +2,25 @@
 import sys
 
 class LogParser:
+    """
+    Class to parse log data and compute statistics.
+    """
+
     def __init__(self):
+        """
+        Initialize LogParser object.
+        """
         self.total_file_size = 0
         self.status_codes = {'200': 0, '301': 0, '400': 0, '401': 0, '403': 0, '404': 0, '405': 0, '500': 0}
         self.line_count = 0
 
     def parse_line(self, line):
+        """
+        Parse a single log line.
+
+        Args:
+            line (str): The log line to parse.
+        """
         parts = line.split()
         if len(parts) >= 7:
             status_code = parts[-2]
@@ -20,12 +33,18 @@ class LogParser:
                 pass
 
     def print_stats(self):
-        print("File size: {}".format(self.total_file_size))
+        """
+        Print computed statistics.
+        """
+        print(f"File size: {self.total_file_size}")
         for code in sorted(self.status_codes.keys()):
             if self.status_codes[code] > 0:
-                print("{}: {}".format(code, self.status_codes[code]))
+                print(f"{code}: {self.status_codes[code]}")
 
     def process_logs(self):
+        """
+        Process log data from stdin.
+        """
         try:
             for line in sys.stdin:
                 self.line_count += 1
