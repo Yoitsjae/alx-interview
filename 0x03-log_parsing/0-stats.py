@@ -1,59 +1,62 @@
 #!/usr/bin/python3
+"""
+This module implements a script that reads from stdin, parses log data,
+and computes statistics based on the input.
+"""
+
 import sys
+import signal
+import re
 
 class LogParser:
     """
-    Class to parse log data and compute statistics.
+    A class to parse log data and compute statistics.
     """
 
     def __init__(self):
-        """
-        Initialize LogParser object.
-        """
-        self.total_file_size = 0
-        self.status_codes = {'200': 0, '301': 0, '400': 0, '401': 0, '403': 0, '404': 0, '405': 0, '500': 0}
+        self.total_size = 0
+        self.status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
         self.line_count = 0
 
     def parse_line(self, line):
         """
-        Parse a single log line.
-
-        Args:
-            line (str): The log line to parse.
+        Parses a single log line and updates statistics.
         """
-        parts = line.split()
-        if len(parts) >= 7:
-            status_code = parts[-2]
-            file_size = parts[-1]
+        regex = r"\[(.*?)\] \"GET /projects/260 HTTP/1\.1\" (\d{3}) (\d+)"
+        match = re.match(regex, line)
+        if match:
+            status_code = int(match.group(2))
+            file_size = int(match.group(3))
+            self.total_size += file_size
             if status_code in self.status_codes:
                 self.status_codes[status_code] += 1
-            try:
-                self.total_file_size += int(file_size)
-            except ValueError:
-                pass
 
     def print_stats(self):
         """
-        Print computed statistics.
+        Prints the computed statistics.
         """
-        print(f"File size: {self.total_file_size}")
-        for code in sorted(self.status_codes.keys()):
-            if self.status_codes[code] > 0:
-                print(f"{code}: {self.status_codes[code]}")
+        print(f"File size: {self.total_size}")
+        for code, count in sorted(self.status_codes.items()):
+            if count > 0:
+                print(f"{code}: {count}")
+
+    def signal_handler(self, signal, frame):
+        """
+        Handles keyboard interruption (CTRL + C).
+        """
+        self.print_stats()
+        sys.exit(0)
 
     def process_logs(self):
         """
-        Process log data from stdin.
+        Processes log data from stdin and computes statistics.
         """
-        try:
-            for line in sys.stdin:
-                self.line_count += 1
-                self.parse_line(line.strip())
-                if self.line_count % 10 == 0:
-                    self.print_stats()
-        except KeyboardInterrupt:
-            pass
-        self.print_stats()
+        signal.signal(signal.SIGINT, self.signal_handler)
+        for line in sys.stdin:
+            self.parse_line(line)
+            self.line_count += 1
+            if self.line_count % 10 == 0:
+                self.print_stats()
 
 if __name__ == "__main__":
     parser = LogParser()
