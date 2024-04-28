@@ -22,12 +22,3 @@ def rotate_2d_matrix(matrix):
     # Reverse each row to get the final rotated matrix
     for row in matrix:
         row.reverse()
-
-if __name__ == "__main__":
-    # Test the rotate_2d_matrix function
-    matrix = [[1, 2, 3],
-              [4, 5, 6],
-              [7, 8, 9]]
-
-    rotate_2d_matrix(matrix)
-    print(matrix)
