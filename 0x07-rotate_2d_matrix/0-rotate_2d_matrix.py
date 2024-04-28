@@ -1,24 +1,30 @@
+#!/usr/bin/python3
+"""
+Rotate a 2D Matrix
+"""
+
+
 def rotate_2d_matrix(matrix):
     """
-    Rotate a given 2D matrix 90 degrees clockwise in place.
-    
-    Args:
-    - matrix (list of lists): The 2D matrix to rotate
-    
-    Raises:
-    - ValueError: If the matrix is empty or not square
+    Rotates a 2D matrix 90 degrees clockwise in-place.
     """
-    if not matrix:
-        raise ValueError("Matrix is empty")
-    
     n = len(matrix)
-    if any(len(row) != n for row in matrix):
-        raise ValueError("Matrix is not square")
-    
-    # Perform the transpose of the matrix
+
+    # Transpose the matrix
     for i in range(n):
         for j in range(i, n):
             matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
-    # Reverse each row to get the final rotated matrix
-    for row in matrix:
-        row.reverse()
+
+    # Reverse each row
+    for i in range(n):
+        matrix[i].reverse()
+
+
+if __name__ == "__main__":
+    # Test the function
+    matrix = [[1, 2, 3],
+              [4, 5, 6],
+              [7, 8, 9]]
+
+    rotate_2d_matrix(matrix)
+    print(matrix)
