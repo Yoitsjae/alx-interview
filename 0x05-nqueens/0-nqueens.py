@@ -1,64 +1,63 @@
 #!/usr/bin/python3
-""" N QUEENS ALGORITHM WITH BACKTRACKING (RECURSION INSIDE LOOP) """
 import sys
 
+def is_safe(board, row, col, N):
+    # Check this row on left side
+    for i in range(col):
+        if board[row][i] == 1:
+            return False
 
-class NQueenSolver:
-    """ Class for solving the N Queens problem """
+    # Check upper diagonal on left side
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
 
-    def __init__(self, n):
-        """ Initialize the NQueenSolver class """
-        self.board_size = n
-        self.columns = [0] * (n + 1)
-        self.solutions = []
+    # Check lower diagonal on left side
+    for i, j in zip(range(row, N), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
 
-    def can_place_queen(self, row, column):
-        """ Check if a queen can be placed at the specified position """
-        for prev_row in range(1, row):
-            prev_col = self.columns[prev_row]
-            if prev_col == column or abs(prev_col - column) == abs(prev_row - row):
-                return False
+    return True
+
+def solve_nqueens_util(board, col, N, result):
+    # Base case: If all queens are placed
+    if col == N:
+        result.append([[i, board[i].index(1)] for i in range(N)])
         return True
 
-    def solve_n_queens(self, row):
-        """ Recursively solve the N Queens problem """
-        for col in range(1, self.board_size + 1):
-            if self.can_place_queen(row, col):
-                self.columns[row] = col
-                if row == self.board_size:
-                    self.add_solution()
-                else:
-                    self.solve_n_queens(row + 1)
+    res = False
+    for i in range(N):
+        if is_safe(board, i, col, N):
+            board[i][col] = 1
+            res = solve_nqueens_util(board, col + 1, N, result) or res
+            board[i][col] = 0  # backtrack
 
-    def add_solution(self):
-        """ Add the current solution to the list of solutions """
-        solution = [(row - 1, self.columns[row] - 1) for row in range(1, self.board_size + 1)]
-        self.solutions.append(solution)
+    return res
 
-    def get_solutions(self):
-        """ Return the list of solutions """
-        return self.solutions
+def solve_nqueens(N):
+    if not isinstance(N, int):
+        print("N must be a number")
+        sys.exit(1)
+    if N < 4:
+        print("N must be at least 4")
+        sys.exit(1)
 
+    board = [[0 for _ in range(N)] for _ in range(N)]
+    result = []
+    solve_nqueens_util(board, 0, N, result)
+
+    for solution in result:
+        print(solution)
 
 if __name__ == "__main__":
-    # Validate command-line arguments
     if len(sys.argv) != 2:
-        print("Usage: nqueens.py N")
+        print("Usage: nqueens N")
         sys.exit(1)
 
     try:
-        board_size = int(sys.argv[1])
-        if board_size < 4:
-            raise ValueError("N must be at least 4")
-    except ValueError as e:
-        print("Invalid input:", e)
+        N = int(sys.argv[1])
+        solve_nqueens(N)
+    except ValueError:
+        print("N must be a number")
         sys.exit(1)
 
-    # Solve the N Queens problem
-    solver = NQueenSolver(board_size)
-    solver.solve_n_queens(1)
-    solutions = solver.get_solutions()
-
-    # Print solutions
-    for solution in solutions:
-        print(solution)
