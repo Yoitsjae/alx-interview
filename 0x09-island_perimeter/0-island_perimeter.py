@@ -1,29 +1,24 @@
+
 #!/usr/bin/python3
+"""
+0-island_perimeter
+"""
+
 
 def island_perimeter(grid):
+    if not grid or len(grid) == 0:
+        return 0
+
     perimeter = 0
-    rows = len(grid)
-    cols = len(grid[0])
-    
+    rows, cols = len(grid), len(grid[0])
+
     for i in range(rows):
         for j in range(cols):
-            if grid[i][j] == 1:  # Check if it's land
-                perimeter += 4  # Initialize with 4 sides
-                
-                # Check adjacent cells
-                if i > 0 and grid[i - 1][j] == 1:  # Check up
-                    perimeter -= 2  # Subtract if land cell is above
-                if j > 0 and grid[i][j - 1] == 1:  # Check left
-                    perimeter -= 2  # Subtract if land cell is to the left
-    
-    return perimeter
+            if grid[i][j] == 1:
+                perimeter += 4
+                if i > 0 and grid[i - 1][j] == 1:
+                    perimeter -= 2
+                if j > 0 and grid[i][j - 1] == 1:
+                    perimeter -= 2
 
-# Example usage:
-grid = [
-    [0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0]
-]
-print(island_perimeter(grid))  # Output: 12
+    return perimeter
