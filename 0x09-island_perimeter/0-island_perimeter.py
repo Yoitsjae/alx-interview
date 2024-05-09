@@ -1,14 +1,6 @@
 
 #!/usr/bin/python3
-"""
-0-island_perimeter
-"""
-
-
 def island_perimeter(grid):
-    if not grid or len(grid) == 0:
-        return 0
-
     perimeter = 0
     rows, cols = len(grid), len(grid[0])
 
@@ -22,3 +14,14 @@ def island_perimeter(grid):
                     perimeter -= 2
 
     return perimeter
+
+# Example usage
+if __name__ == "__main__":
+    grid = [
+        [0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0],
+        [0, 1, 1, 1, 0, 0],
+        [0, 0, 0, 0, 0, 0]
+    ]
+    print(island_perimeter(grid))
