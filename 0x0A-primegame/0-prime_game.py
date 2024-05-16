@@ -2,48 +2,42 @@
 
 """ Prime Game """
 
-
-def check_prime(n):
-    """ Checks if n is a prime number """
-    for i in range(2, int(n ** 0.5) + 1):
-        if not n % i:
-            return False
-    return True
-
-
-def add_prime(n, primes):
-    """ Adds prime to list """
-    last_prime = primes[-1]
-    if n > last_prime:
-        for i in range(last_prime + 1, n + 1):
-            if check_prime(i):
-                primes.append(i)
-            else:
-                primes.append(0)
-
+def sieve_of_eratosthenes(max_num):
+    """ Generate a list of primes up to max_num using the Sieve of Eratosthenes """
+    is_prime = [True] * (max_num + 1)
+    p = 2
+    while (p * p <= max_num):
+        if (is_prime[p] == True):
+            for i in range(p * p, max_num + 1, p):
+                is_prime[i] = False
+        p += 1
+    return [p for p in range(2, max_num + 1) if is_prime[p]]
 
 def isWinner(x, nums):
-    """ x is the number of rounds and nums is an array of n
-    Return: name of the player that won the most rounds
-    If the winner cannot be determined, return None """
+    """ Determine the winner of the prime game after x rounds with different n values """
+    if x < 1 or not nums:
+        return None
+    
+    max_num = max(nums)
+    primes = sieve_of_eratosthenes(max_num)
+    prime_count = [0] * (max_num + 1)
 
+    for i in range(1, max_num + 1):
+        prime_count[i] = prime_count[i - 1]
+        if i in primes:
+            prime_count[i] += 1
+    
     score = {"Maria": 0, "Ben": 0}
-    primes = [0, 0, 2]
-    add_prime(max(nums), primes)
 
-    for round in range(x):
-        _sum = sum((i != 0 and i <= nums[round])
-                   for i in primes[:nums[round] + 1])
-        if (_sum % 2):
-            winner = "Maria"
+    for n in nums:
+        if prime_count[n] % 2 == 1:
+            score["Maria"] += 1
         else:
-            winner = "Ben"
-        if winner:
-            score[winner] += 1
+            score["Ben"] += 1
 
     if score["Maria"] > score["Ben"]:
         return "Maria"
     elif score["Ben"] > score["Maria"]:
         return "Ben"
-
+    
     return None
