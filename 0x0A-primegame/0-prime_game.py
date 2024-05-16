@@ -4,7 +4,7 @@
 
 
 def check_prime(n):
-    """ Check if n is a prime number """
+    """ Checks if n is a prime number """
     for i in range(2, int(n ** 0.5) + 1):
         if not n % i:
             return False
@@ -12,7 +12,7 @@ def check_prime(n):
 
 
 def add_prime(n, primes):
-    """ Add prime to list """
+    """ Adds prime to list """
     last_prime = primes[-1]
     if n > last_prime:
         for i in range(last_prime + 1, n + 1):
