@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
-Making Change
+Making Change O(n)
+Author: Jae Ncube
 """
 
 def makeChange(coins, total):
