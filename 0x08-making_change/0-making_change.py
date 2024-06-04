@@ -39,5 +39,5 @@ def makeChange(coins, total):
 
 if __name__ == '__main__':
     # Test cases
-    print(makeChange([1, 2, 25], 37))  # Output: 7
-    print(makeChange([1256, 54, 48, 16, 102], 1453))  # Output: -1
+    print(makeChange([1, 2, 25], 37))  # Expected Output: 15 (1*25 + 6*2)
+    print(makeChange([1256, 54, 48, 16, 102], 1453))  # Expected Output: -1
