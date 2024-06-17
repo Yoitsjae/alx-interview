@@ -1,43 +1,60 @@
 #!/usr/bin/python3
 
-""" Prime Game """
-
-def sieve_of_eratosthenes(max_num):
-    """ Generate a list of primes up to max_num using the Sieve of Eratosthenes """
-    is_prime = [True] * (max_num + 1)
-    p = 2
-    while (p * p <= max_num):
-        if (is_prime[p] == True):
-            for i in range(p * p, max_num + 1, p):
-                is_prime[i] = False
-        p += 1
-    return [p for p in range(2, max_num + 1) if is_prime[p]]
-
 def isWinner(x, nums):
-    """ Determine the winner of the prime game after x rounds with different n values """
-    if x < 1 or not nums:
-        return None
-    
-    max_num = max(nums)
-    primes = sieve_of_eratosthenes(max_num)
-    prime_count = [0] * (max_num + 1)
+    def sieve(n):
+        primes = [True] * (n + 1)
+        p = 2
+        while (p * p <= n):
+            if (primes[p] == True):
+                for i in range(p * p, n + 1, p):
+                    primes[i] = False
+            p += 1
+        primes[0], primes[1] = False, False
+        return primes
 
-    for i in range(1, max_num + 1):
-        prime_count[i] = prime_count[i - 1]
-        if i in primes:
-            prime_count[i] += 1
-    
-    score = {"Maria": 0, "Ben": 0}
+    def prime_game(n, primes):
+        # Initialize available numbers
+        available = [i for i in range(1, n + 1)]
+        maria_turn = True
+        
+        while True:
+            move_made = False
+            for num in available:
+                if primes[num]:
+                    move_made = True
+                    prime = num
+                    break
 
+            if not move_made:
+                return "Ben" if maria_turn else "Maria"
+
+            # Remove prime and its multiples
+            available = [num for num in available if num % prime != 0]
+
+            # Switch turns
+            maria_turn = not maria_turn
+
+    # Find maximum number in nums to sieve
+    max_n = max(nums)
+    primes = sieve(max_n)
+    
+    maria_wins = 0
+    ben_wins = 0
+    
     for n in nums:
-        if prime_count[n] % 2 == 1:
-            score["Maria"] += 1
+        winner = prime_game(n, primes)
+        if winner == "Maria":
+            maria_wins += 1
         else:
-            score["Ben"] += 1
-
-    if score["Maria"] > score["Ben"]:
-        return "Maria"
-    elif score["Ben"] > score["Maria"]:
-        return "Ben"
+            ben_wins += 1
     
-    return None
+    if maria_wins > ben_wins:
+        return "Maria"
+    elif ben_wins > maria_wins:
+        return "Ben"
+    else:
+        return None
+
+# Example usage
+if __name__ == "__main__":
+    print("Winner: {}".format(isWinner(5, [2, 5, 1, 4, 3])))
