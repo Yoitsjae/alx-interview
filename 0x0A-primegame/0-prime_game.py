@@ -3,7 +3,6 @@ def isWinner(x, nums):
     if not nums or x < 1:
         return None
     
-    # Find the maximum number in nums to limit our sieve and DP array
     max_num = max(nums)
     
     # Sieve of Eratosthenes to find all primes up to max_num
@@ -15,28 +14,20 @@ def isWinner(x, nums):
             for multiple in range(start*start, max_num + 1, start):
                 is_prime[multiple] = False
     
-    # Precompute winners for every number up to max_num
-    winner = [0] * (max_num + 1)
+    # Precompute prime counts up to max_num
+    prime_count = [0] * (max_num + 1)
+    for i in range(1, max_num + 1):
+        prime_count[i] = prime_count[i - 1] + (1 if is_prime[i] else 0)
     
-    for n in range(1, max_num + 1):
-        primes = [i for i in range(1, n + 1) if is_prime[i]]
-        if not primes:
-            winner[n] = 1  # Ben wins if there are no primes
-        else:
-            for prime in primes:
-                if n % prime == 0 and winner[n - prime] == 0:
-                    winner[n] = 1
-                    break
-    
-    # Count the wins for Maria and Ben
+    # Determine the winner for each number in nums
     maria_wins = 0
     ben_wins = 0
     
     for n in nums:
-        if winner[n] == 1:
-            maria_wins += 1
-        else:
+        if prime_count[n] % 2 == 0:
             ben_wins += 1
+        else:
+            maria_wins += 1
     
     if maria_wins > ben_wins:
         return "Maria"
@@ -44,3 +35,8 @@ def isWinner(x, nums):
         return "Ben"
     else:
         return None
+
+# Test cases
+if __name__ == "__main__":
+    print("Winner: {}".format(isWinner(3, [4, 5, 1])))  # Expected output: Ben
+    print("Winner: {}".format(isWinner(5, [2, 5, 1, 4, 3])))  # Expected output: Ben
