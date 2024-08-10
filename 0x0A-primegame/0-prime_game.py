@@ -1,7 +1,4 @@
 #!/usr/bin/python3
-
-""" Prime Game """
-
 def isWinner(x, nums):
     if not nums or x < 1:
         return None
@@ -47,6 +44,3 @@ def isWinner(x, nums):
         return "Ben"
     else:
         return None
-
-# Test case
-print("Winner: {}".format(isWinner(3, [4, 5, 1])))  # Example from the problem statement
