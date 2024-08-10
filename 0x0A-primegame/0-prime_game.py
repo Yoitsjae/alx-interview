@@ -1,30 +1,39 @@
-#!/usr/bin/python3
+def sieve_of_eratosthenes(max_num):
+    is_prime = [True] * (max_num + 1)
+    p = 2
+    while (p * p <= max_num):
+        if (is_prime[p] == True):
+            for i in range(p * p, max_num + 1, p):
+                is_prime[i] = False
+        p += 1
+    is_prime[0] = is_prime[1] = False
+    return [p for p in range(max_num + 1) if is_prime[p]]
+
 def isWinner(x, nums):
-    if not nums or x < 1:
+    if not nums or x <= 0:
         return None
     
     max_num = max(nums)
+    primes = sieve_of_eratosthenes(max_num)
     
-    # Sieve of Eratosthenes to find all primes up to max_num
-    is_prime = [True] * (max_num + 1)
-    is_prime[0] = is_prime[1] = False
-    
-    for start in range(2, int(max_num**0.5) + 1):
-        if is_prime[start]:
-            for multiple in range(start*start, max_num + 1, start):
-                is_prime[multiple] = False
-    
-    # Precompute prime counts up to max_num
-    prime_count = [0] * (max_num + 1)
-    for i in range(1, max_num + 1):
-        prime_count[i] = prime_count[i - 1] + (1 if is_prime[i] else 0)
-    
-    # Determine the winner for each number in nums
+    # This will store the winner for each game.
     maria_wins = 0
     ben_wins = 0
     
     for n in nums:
-        if prime_count[n] % 2 == 0:
+        if n == 1:
+            ben_wins += 1
+            continue
+        
+        primes_set = set(p for p in primes if p <= n)
+        maria_turn = True
+        
+        while primes_set:
+            prime = min(primes_set)
+            primes_set -= set(range(prime, n + 1, prime))
+            maria_turn = not maria_turn
+        
+        if maria_turn:
             ben_wins += 1
         else:
             maria_wins += 1
@@ -35,8 +44,3 @@ def isWinner(x, nums):
         return "Ben"
     else:
         return None
-
-# Test cases
-if __name__ == "__main__":
-    print("Winner: {}".format(isWinner(3, [4, 5, 1])))  # Expected output: Ben
-    print("Winner: {}".format(isWinner(5, [2, 5, 1, 4, 3])))  # Expected output: Ben
