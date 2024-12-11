@@ -1,47 +1,43 @@
 #!/usr/bin/python3
-def is_prime(num):
-    """Check if a number is prime."""
-    if num < 2:
-        return False
-    for i in range(2, int(num ** 0.5) + 1):
-        if num % i == 0:
-            return False
-    return True
 
-def sieve_of_eratosthenes(limit):
-    """Generate a list of primes up to the given limit."""
-    primes = [True] * (limit + 1)
-    primes[0] = primes[1] = False
-    for i in range(2, int(limit ** 0.5) + 1):
-        if primes[i]:
-            for j in range(i * i, limit + 1, i):
-                primes[j] = False
-    return [i for i in range(limit + 1) if primes[i]]
+""" Prime Game """
+
+def sieve_of_eratosthenes(max_num):
+    """ Generate a list of primes up to max_num using the Sieve of Eratosthenes """
+    is_prime = [True] * (max_num + 1)
+    p = 2
+    while (p * p <= max_num):
+        if (is_prime[p] == True):
+            for i in range(p * p, max_num + 1, p):
+                is_prime[i] = False
+        p += 1
+    return [p for p in range(2, max_num + 1) if is_prime[p]]
 
 def isWinner(x, nums):
-    """Determine the winner of the Prime Game."""
-    if not nums or x < 1:
+    """ Determine the winner of the prime game after x rounds with different n values """
+    if x < 1 or not nums:
         return None
+    
+    max_num = max(nums)
+    primes = sieve_of_eratosthenes(max_num)
+    prime_count = [0] * (max_num + 1)
 
-    max_n = max(nums)
-    primes = sieve_of_eratosthenes(max_n)
-
-    prime_counts = [0] * (max_n + 1)
-    for i in range(1, max_n + 1):
-        prime_counts[i] = prime_counts[i - 1] + (1 if i in primes else 0)
-
-    maria_wins = 0
-    ben_wins = 0
+    for i in range(1, max_num + 1):
+        prime_count[i] = prime_count[i - 1]
+        if i in primes:
+            prime_count[i] += 1
+    
+    score = {"Maria": 0, "Ben": 0}
 
     for n in nums:
-        if prime_counts[n] % 2 == 0:
-            ben_wins += 1
+        if prime_count[n] % 2 == 1:
+            score["Maria"] += 1
         else:
-            maria_wins += 1
+            score["Ben"] += 1
 
-    if maria_wins > ben_wins:
+    if score["Maria"] > score["Ben"]:
         return "Maria"
-    elif ben_wins > maria_wins:
+    elif score["Ben"] > score["Maria"]:
         return "Ben"
-    else:
-        return None
+    
+    return None
